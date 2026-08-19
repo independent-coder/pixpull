@@ -1,6 +1,6 @@
 [package]
 name = "pixpull"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Super-robust HTTP/HTTPS picture downloader CLI"
 license = "MIT"

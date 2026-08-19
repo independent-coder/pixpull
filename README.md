@@ -24,7 +24,7 @@ it directly instead of shelling out to the CLI:
 
 ```toml
 [dependencies]
-pixpull = "0.1"
+pixpull = "0.1.1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 ```
 
