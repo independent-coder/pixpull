@@ -1,0 +1,16 @@
+# Build artifacts
+/target
+/picdl.exe
+
+# Download outputs (test/benchmark runs)
+/pics/
+/pic_aria2c/
+/download_list.txt
+
+# Resume leftovers
+*.part
+
+# e2e test artifacts
+/e2e_out/
+/server.log
+__pycache__/

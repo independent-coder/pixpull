@@ -1,0 +1,22 @@
+[package]
+name = "picdl"
+version = "0.1.0"
+edition = "2021"
+description = "Super-robust HTTP/HTTPS picture downloader CLI"
+license = "MIT"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "fs", "io-util", "time"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "http2", "stream"] }
+futures = "0.3"
+anyhow = "1"
+rand = "0.8"
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+url = "2"
+httpdate = "1"
+
+[profile.release]
+lto = true
+strip = true
