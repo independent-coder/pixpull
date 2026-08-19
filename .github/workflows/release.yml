@@ -5,14 +5,15 @@ on:
     tags:
       - 'v[0-9]+.*'
 
+permissions:
+  contents: write
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: taiki-e/create-release-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: taiki-e/create-gh-release-action@v1
 
   upload-assets:
     needs: create-release
@@ -35,4 +36,3 @@ jobs:
         with:
           bin: pixpull
           target: ${{ matrix.target }}
-          token: ${{ secrets.GITHUB_TOKEN }}
