@@ -66,9 +66,13 @@ pub struct Args {
     #[arg(long, value_name = "FILE")]
     pub config: Option<PathBuf>,
 
-
     /// Minimum delay in ms between request starts (rate limiting)
-    #[arg(long = "delay", visible_alias = "delay-ms", value_name = "MS", default_value_t = 0)]
+    #[arg(
+        long = "delay",
+        visible_alias = "delay-ms",
+        value_name = "MS",
+        default_value_t = 0
+    )]
     pub delay_ms: u64,
 
     /// Max retry attempts per file (retries on 408/429/5xx/timeouts/network errors)
@@ -199,6 +203,16 @@ pub fn parse_input_file(path: &Path) -> Vec<InputUrl> {
     out
 }
 
+/// Default browser User-Agents used for --ua-rotate.
+pub const BROWSER_UAS: &[&str] = &[
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -229,13 +243,3 @@ mod tests {
         assert_eq!(inputs[2].out, None);
     }
 }
-
-/// Default browser User-Agents used for --ua-rotate.
-pub const BROWSER_UAS: &[&str] = &[
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Safari/605.1.15",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-];

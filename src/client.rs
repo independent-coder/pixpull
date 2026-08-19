@@ -8,11 +8,9 @@
 use crate::args::{Args, BROWSER_UAS};
 use crate::cookies::{build_cookie_header, parse_cookie_string, parse_netscape_jar, Cookie};
 use anyhow::{anyhow, Result};
-use reqwest::header::{
-    HeaderMap, HeaderName, HeaderValue, ACCEPT, ACCEPT_LANGUAGE, USER_AGENT,
-};
-use std::sync::Arc;
+use reqwest::header::{HeaderMap, HeaderName, HeaderValue, ACCEPT, ACCEPT_LANGUAGE, USER_AGENT};
 use std::sync::atomic::AtomicUsize;
+use std::sync::Arc;
 use std::time::Duration;
 
 const DEFAULT_UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36";
@@ -74,7 +72,9 @@ impl ClientFactory {
     /// Next User-Agent for this request (rotates if --ua-rotate).
     fn next_ua(&self) -> String {
         if self.args.ua_rotate {
-            let i = self.ua_index.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let i = self
+                .ua_index
+                .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             BROWSER_UAS[i % BROWSER_UAS.len()].to_string()
         } else {
             self.args
@@ -95,12 +95,11 @@ impl ClientFactory {
         );
         headers.insert(
             ACCEPT,
-            HeaderValue::from_static("image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"),
+            HeaderValue::from_static(
+                "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+            ),
         );
-        headers.insert(
-            ACCEPT_LANGUAGE,
-            HeaderValue::from_static("en-US,en;q=0.9"),
-        );
+        headers.insert(ACCEPT_LANGUAGE, HeaderValue::from_static("en-US,en;q=0.9"));
         if let Some(referer) = &self.args.referer {
             headers.insert(
                 reqwest::header::REFERER,

@@ -65,23 +65,35 @@ pub fn apply_to_args(args: &mut crate::args::Args, cfg: &Config) {
     let d = &cfg.download;
     let h = &cfg.http;
 
-    if args.output == Path::new(".") && d.output.is_some() {
-        args.output = Path::new(d.output.as_ref().unwrap()).to_path_buf();
+    if args.output == Path::new(".") {
+        if let Some(v) = &d.output {
+            args.output = Path::new(v).to_path_buf();
+        }
     }
-    if args.concurrency == 4 && d.concurrency.is_some() {
-        args.concurrency = d.concurrency.unwrap();
+    if args.concurrency == 4 {
+        if let Some(v) = d.concurrency {
+            args.concurrency = v;
+        }
     }
-    if args.delay_ms == 0 && d.delay_ms.is_some() {
-        args.delay_ms = d.delay_ms.unwrap();
+    if args.delay_ms == 0 {
+        if let Some(v) = d.delay_ms {
+            args.delay_ms = v;
+        }
     }
-    if args.retries == 5 && d.retries.is_some() {
-        args.retries = d.retries.unwrap();
+    if args.retries == 5 {
+        if let Some(v) = d.retries {
+            args.retries = v;
+        }
     }
-    if args.timeout_secs == 60 && d.timeout_secs.is_some() {
-        args.timeout_secs = d.timeout_secs.unwrap();
+    if args.timeout_secs == 60 {
+        if let Some(v) = d.timeout_secs {
+            args.timeout_secs = v;
+        }
     }
-    if args.connect_timeout_secs == 15 && d.connect_timeout_secs.is_some() {
-        args.connect_timeout_secs = d.connect_timeout_secs.unwrap();
+    if args.connect_timeout_secs == 15 {
+        if let Some(v) = d.connect_timeout_secs {
+            args.connect_timeout_secs = v;
+        }
     }
     if !args.no_resume && d.resume == Some(false) {
         args.no_resume = true;
@@ -89,8 +101,10 @@ pub fn apply_to_args(args: &mut crate::args::Args, cfg: &Config) {
     if !args.overwrite && d.overwrite == Some(true) {
         args.overwrite = true;
     }
-    if args.max_size == 0 && d.max_size.is_some() {
-        args.max_size = d.max_size.unwrap();
+    if args.max_size == 0 {
+        if let Some(v) = d.max_size {
+            args.max_size = v;
+        }
     }
     if !args.no_validate && d.validate == Some(false) {
         args.no_validate = true;
@@ -98,29 +112,43 @@ pub fn apply_to_args(args: &mut crate::args::Args, cfg: &Config) {
     if args.filename.is_none() && d.filename.is_some() {
         args.filename = d.filename.clone();
     }
-    if args.start_index == 1 && d.start_index.is_some() {
-        args.start_index = d.start_index.unwrap();
+    if args.start_index == 1 {
+        if let Some(v) = d.start_index {
+            args.start_index = v;
+        }
     }
     if !args.retry_on_http_errors && d.retry_on_http_errors == Some(true) {
         args.retry_on_http_errors = true;
     }
-    if args.split == 1 && d.split.is_some() {
-        args.split = d.split.unwrap();
+    if args.split == 1 {
+        if let Some(v) = d.split {
+            args.split = v;
+        }
     }
-    if args.max_download_limit == 0 && d.max_download_limit.is_some() {
-        args.max_download_limit = d.max_download_limit.unwrap();
+    if args.max_download_limit == 0 {
+        if let Some(v) = d.max_download_limit {
+            args.max_download_limit = v;
+        }
     }
-    if args.max_overall_download_limit == 0 && d.max_overall_download_limit.is_some() {
-        args.max_overall_download_limit = d.max_overall_download_limit.unwrap();
+    if args.max_overall_download_limit == 0 {
+        if let Some(v) = d.max_overall_download_limit {
+            args.max_overall_download_limit = v;
+        }
     }
-    if args.max_file_not_found == 0 && d.max_file_not_found.is_some() {
-        args.max_file_not_found = d.max_file_not_found.unwrap();
+    if args.max_file_not_found == 0 {
+        if let Some(v) = d.max_file_not_found {
+            args.max_file_not_found = v;
+        }
     }
-    if args.max_total_connections == 0 && d.max_total_connections.is_some() {
-        args.max_total_connections = d.max_total_connections.unwrap();
+    if args.max_total_connections == 0 {
+        if let Some(v) = d.max_total_connections {
+            args.max_total_connections = v;
+        }
     }
-    if args.log.is_none() && d.log.is_some() {
-        args.log = Some(Path::new(d.log.as_ref().unwrap()).to_path_buf());
+    if args.log.is_none() {
+        if let Some(v) = &d.log {
+            args.log = Some(Path::new(v).to_path_buf());
+        }
     }
     if !args.http1 && h.http1 == Some(true) {
         args.http1 = true;
@@ -144,8 +172,10 @@ pub fn apply_to_args(args: &mut crate::args::Args, cfg: &Config) {
     if args.cookie.is_none() && h.cookie.is_some() {
         args.cookie = h.cookie.clone();
     }
-    if args.cookie_jar.is_none() && h.cookie_jar.is_some() {
-        args.cookie_jar = Some(Path::new(h.cookie_jar.as_ref().unwrap()).to_path_buf());
+    if args.cookie_jar.is_none() {
+        if let Some(v) = &h.cookie_jar {
+            args.cookie_jar = Some(Path::new(v).to_path_buf());
+        }
     }
     // Config headers are merged in (CLI headers take precedence by order).
     args.header.splice(0..0, h.headers.clone());

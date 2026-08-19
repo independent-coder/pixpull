@@ -107,7 +107,7 @@ mod tests {
         assert!(start.elapsed().as_millis() < 100);
     }
 
-#[tokio::test]
+    #[tokio::test]
     async fn large_single_charge_does_not_deadlock() {
         // A charge larger than one second's budget must still complete at
         // roughly the configured rate (this previously hung forever).

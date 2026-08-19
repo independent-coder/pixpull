@@ -1,7 +1,21 @@
 # pixpull
 
+[![crates.io](https://img.shields.io/crates/v/pixpull.svg)](https://crates.io/crates/pixpull)
+[![downloads](https://img.shields.io/crates/d/pixpull.svg)](https://crates.io/crates/pixpull)
+[![CI](https://github.com/independent-coder/pixpull/actions/workflows/ci.yml/badge.svg)](https://github.com/independent-coder/pixpull/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.MD)
+
 Super-robust HTTP/HTTPS **picture** downloader, written from scratch in Rust.
 The download engine for your scrapers — no more shelling out to `aria2c`.
+
+## Install
+
+```bash
+cargo install pixpull
+```
+
+Prebuilt binaries for Windows, macOS, and Linux are attached to each
+[GitHub release](https://github.com/independent-coder/pixpull/releases/latest).
 
 ## What it does differently
 

@@ -148,7 +148,11 @@ mod tests {
         writeln!(f, "# Netscape HTTP Cookie File").unwrap();
         writeln!(f, ".example.com\tTRUE\t/\tFALSE\t9999999999\tsid\txyz").unwrap();
         writeln!(f, ".example.com\tTRUE\t/\tFALSE\t1\texpired\tgone").unwrap();
-        writeln!(f, "#HttpOnly_.other.com\tTRUE\t/\tTRUE\t9999999999\ttok\tabc").unwrap();
+        writeln!(
+            f,
+            "#HttpOnly_.other.com\tTRUE\t/\tTRUE\t9999999999\ttok\tabc"
+        )
+        .unwrap();
         f.sync_all().unwrap();
 
         let cookies = parse_netscape_jar(&path).unwrap();
@@ -164,9 +168,8 @@ mod tests {
         let header = build_cookie_header(&jar, &[], "img.example.com");
         assert_eq!(header.as_deref(), Some("a=1"));
 
-        let jar = parse_netscape_jar_from_str(
-            ".example.com\tTRUE\t/\tFALSE\t9999999999\tsid\txyz\n",
-        );
+        let jar =
+            parse_netscape_jar_from_str(".example.com\tTRUE\t/\tFALSE\t9999999999\tsid\txyz\n");
         let header = build_cookie_header(&[], &jar, "cdn.example.com").unwrap();
         assert!(header.contains("sid=xyz"));
         let header = build_cookie_header(&[], &jar, "other.org");

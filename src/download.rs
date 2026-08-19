@@ -65,7 +65,10 @@ enum Attempt {
     },
     /// Give up: permanent error. `not_found` marks HTTP 404 for
     /// --max-file-not-found.
-    GiveUp { reason: String, not_found: bool },
+    GiveUp {
+        reason: String,
+        not_found: bool,
+    },
 }
 
 /// Download a single image URL. `out` is an optional per-URL filename from
@@ -164,7 +167,17 @@ pub async fn run_job(
     // --- Retry loop ---------------------------------------------------------
     let mut attempt: u32 = 0;
     loop {
-        match attempt_once(factory, args, shared, url, &host, &part_path, &file_throttle).await {
+        match attempt_once(
+            factory,
+            args,
+            shared,
+            url,
+            &host,
+            &part_path,
+            &file_throttle,
+        )
+        .await
+        {
             Ok(Attempt::Done(part_path_done, bytes)) => {
                 debug_assert_eq!(part_path_done, part_path);
                 // Integrity validation (magic bytes) + extension fix-up.
@@ -235,7 +248,11 @@ pub async fn run_job(
                     not_found: false,
                 };
             }
-            Ok(Attempt::Retry { reason, keep_part, retry_after }) => {
+            Ok(Attempt::Retry {
+                reason,
+                keep_part,
+                retry_after,
+            }) => {
                 if !keep_part {
                     let _ = tokio::fs::remove_file(&part_path).await;
                 }
@@ -481,7 +498,9 @@ async fn attempt_once(
         }
         total += chunk.len() as u64;
     }
-    file.flush().await.map_err(|e| anyhow!("flush failed: {e}"))?;
+    file.flush()
+        .await
+        .map_err(|e| anyhow!("flush failed: {e}"))?;
 
     if total == 0 {
         return Ok(Attempt::GiveUp {
@@ -514,7 +533,10 @@ async fn validate_file(part_path: &Path) -> Result<crate::validate::Format> {
         .await
         .map_err(|e| anyhow!("cannot open downloaded file: {e}"))?;
     let mut head = vec![0u8; 4096];
-    let n = f.read(&mut head).await.map_err(|e| anyhow!("read failed: {e}"))?;
+    let n = f
+        .read(&mut head)
+        .await
+        .map_err(|e| anyhow!("read failed: {e}"))?;
     head.truncate(n);
     validate(&head).map_err(anyhow::Error::msg)
 }
@@ -553,6 +575,7 @@ async fn probe_range(
 /// - `Ok(Some(Attempt))` when the segmented path finished (Done or GiveUp),
 /// - `Ok(None)` when a server ignored a range mid-flight (fall back),
 /// - `Err` on internal IO errors.
+#[allow(clippy::too_many_arguments)]
 async fn download_segmented(
     client: &reqwest::Client,
     args: &Args,
@@ -634,7 +657,9 @@ async fn download_segmented(
             .map_err(|e| anyhow!("concat failed: {e}"))?;
         let _ = tokio::fs::remove_file(p).await;
     }
-    out.flush().await.map_err(|e| anyhow!("flush failed: {e}"))?;
+    out.flush()
+        .await
+        .map_err(|e| anyhow!("flush failed: {e}"))?;
 
     Ok(Some(Attempt::Done(part_path.to_path_buf(), total)))
 }
@@ -643,6 +668,7 @@ async fn download_segmented(
 /// Returns `Ok(true)` when the segment is complete, `Ok(false)` when the
 /// server ignored the Range header (whole file must fall back to one stream),
 /// and `Err` when the segment failed after exhausting retries.
+#[allow(clippy::too_many_arguments)]
 async fn download_segment(
     client: &reqwest::Client,
     args: &Args,
@@ -718,7 +744,9 @@ async fn download_segment(
                     }
                 }
             }
-            file.flush().await.map_err(|e| anyhow!("flush failed: {e}"))?;
+            file.flush()
+                .await
+                .map_err(|e| anyhow!("flush failed: {e}"))?;
             if !interrupted && got == expected {
                 return Ok(true);
             }
@@ -814,7 +842,7 @@ fn stable_hash(s: &str) -> u64 {
 
 /// Extract a sane basename from a URL path (percent-decoded).
 fn url_basename(url: &url::Url) -> Option<String> {
-    let seg = url.path_segments()?.last().filter(|s| !s.is_empty())?;
+    let seg = url.path_segments()?.next_back().filter(|s| !s.is_empty())?;
     let base = sanitize(seg);
     if base.is_empty() {
         None
@@ -840,7 +868,11 @@ fn sanitize(s: &str) -> String {
         out.pop();
     }
     if out.len() > 200 {
-        let cut = out.char_indices().nth(200).map(|(i, _)| i).unwrap_or(out.len());
+        let cut = out
+            .char_indices()
+            .nth(200)
+            .map(|(i, _)| i)
+            .unwrap_or(out.len());
         out.truncate(cut);
     }
     out
@@ -848,7 +880,11 @@ fn sanitize(s: &str) -> String {
 
 /// Replace the extension of `path` with the canonical one for `format`.
 fn fix_extension(path: &Path, format: crate::validate::Format) -> PathBuf {
-    let name = path.file_name().unwrap_or_default().to_string_lossy().to_string();
+    let name = path
+        .file_name()
+        .unwrap_or_default()
+        .to_string_lossy()
+        .to_string();
     let new_name = match name.rsplit_once('.') {
         Some((stem, _)) if !stem.is_empty() => format!("{stem}.{}", format.ext()),
         _ => format!("{name}.{}", format.ext()),
@@ -925,11 +961,20 @@ mod tests {
 
     #[test]
     fn template_rendering() {
-        assert_eq!(render_template("img_{n}.{ext}", crate::validate::Format::Png, 3), "img_3.png");
+        assert_eq!(
+            render_template("img_{n}.{ext}", crate::validate::Format::Png, 3),
+            "img_3.png"
+        );
         // {ext} is only substituted when the template asks for it; otherwise
         // fix_extension() appends the detected extension at the caller.
-        assert_eq!(render_template("img_{n:04}", crate::validate::Format::Jpeg, 7), "img_0007");
-        assert_eq!(render_template("set/{n}", crate::validate::Format::Jpeg, 1), "set_1");
+        assert_eq!(
+            render_template("img_{n:04}", crate::validate::Format::Jpeg, 7),
+            "img_0007"
+        );
+        assert_eq!(
+            render_template("set/{n}", crate::validate::Format::Jpeg, 1),
+            "set_1"
+        );
     }
 
     #[test]
@@ -958,8 +1003,8 @@ mod tests {
         // attempt N => base 2^N seconds + up to 500ms jitter.
         let b1 = backoff(1, None).as_millis();
         let b2 = backoff(2, None).as_millis();
-        assert!(b1 >= 2000 && b1 <= 2500);
-        assert!(b2 >= 4000 && b2 <= 4500);
+        assert!((2000..=2500).contains(&b1));
+        assert!((4000..=4500).contains(&b2));
         let capped = backoff(9, None).as_millis();
         assert!(capped <= 64000 + 500);
         // Retry-After wins when it is longer than the computed backoff.

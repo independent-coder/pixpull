@@ -115,7 +115,8 @@ fn is_svg(buf: &[u8]) -> bool {
     if head.starts_with(&[0xEF, 0xBB, 0xBF]) {
         i += 3;
     }
-    while i < head.len() && (head[i] == b' ' || head[i] == b'\t' || head[i] == b'\r' || head[i] == b'\n')
+    while i < head.len()
+        && (head[i] == b' ' || head[i] == b'\t' || head[i] == b'\r' || head[i] == b'\n')
     {
         i += 1;
     }
@@ -133,7 +134,12 @@ pub fn validate(buf: &[u8]) -> Result<Format, String> {
     match detect(buf) {
         Some(f) => Ok(f),
         None => {
-            let preview = buf.iter().take(32).map(|b| format!("{b:02x}")).collect::<Vec<_>>().join(" ");
+            let preview = buf
+                .iter()
+                .take(32)
+                .map(|b| format!("{b:02x}"))
+                .collect::<Vec<_>>()
+                .join(" ");
             Err(format!(
                 "bytes do not match any known image format (first 32 bytes: {preview})"
             ))
@@ -178,8 +184,14 @@ mod tests {
         assert_eq!(detect(b"\x00\x00\x01\x00\x01\x00"), Some(Format::Ico));
         assert_eq!(detect(b"\x00\x00\x00\x18ftypavif\x00"), Some(Format::Avif));
         assert_eq!(detect(b"\x00\x00\x00\x18ftypheic\x00"), Some(Format::Heic));
-        assert_eq!(detect(b"<?xml version=\"1.0\"?><svg xmlns=..."), Some(Format::Svg));
-        assert_eq!(detect(b"\xEF\xBB\xBF<svg viewBox=\"0 0 1 1\">"), Some(Format::Svg));
+        assert_eq!(
+            detect(b"<?xml version=\"1.0\"?><svg xmlns=..."),
+            Some(Format::Svg)
+        );
+        assert_eq!(
+            detect(b"\xEF\xBB\xBF<svg viewBox=\"0 0 1 1\">"),
+            Some(Format::Svg)
+        );
         assert_eq!(detect(b"<html><body>nope</body></html>"), None);
         assert_eq!(detect(b"hello world this is not an image"), None);
     }

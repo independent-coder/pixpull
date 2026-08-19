@@ -62,7 +62,9 @@ async fn main() -> anyhow::Result<()> {
     let run_shared = Shared {
         stop: Arc::new(AtomicBool::new(false)),
         global_throttle: if args.max_overall_download_limit > 0 {
-            Some(Throttle::new(args.max_overall_download_limit as f64 * 1024.0))
+            Some(Throttle::new(
+                args.max_overall_download_limit as f64 * 1024.0,
+            ))
         } else {
             None
         },
