@@ -17,6 +17,42 @@ cargo install pixpull
 Prebuilt binaries for Windows, macOS, and Linux are attached to each
 [GitHub release](https://github.com/independent-coder/pixpull/releases/latest).
 
+## Library
+
+The download engine is also published as a Rust library, so scrapers can use
+it directly instead of shelling out to the CLI:
+
+```toml
+[dependencies]
+pixpull = "0.1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+```
+
+```rust
+use std::sync::Arc;
+use clap::Parser;
+use pixpull::{Args, ClientFactory, Shared, run_job};
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Parse config from the CLI, or build an `Args` and tweak the fields.
+    let args = Args::parse_from(["pixpull", "-o", "pics", "--concurrency", "8"]);
+
+    // One pooled client, shared across all downloads.
+    let factory = ClientFactory::new(Arc::new(args.clone()))?;
+
+    // Run-wide state (early-stop flag, global speed cap).
+    let shared = Shared::default();
+
+    let result = run_job(&factory, &args, &shared, "https://site.com/a.jpg", 1, None).await;
+    println!("{:?}", result.status);
+    Ok(())
+}
+```
+
+Drive jobs with your own concurrency — see `src/main.rs` for a worker-pool
+reference implementation.
+
 ## What it does differently
 
 | Feature | Behavior |

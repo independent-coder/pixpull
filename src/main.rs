@@ -1,24 +1,16 @@
-//! pixpull — super-robust HTTP/HTTPS picture downloader.
+//! pixpull — super-robust HTTP/HTTPS picture downloader (CLI binary).
 //!
-//! Bulk image download with retries/backoff, resume, concurrency, segmented
-//! downloads, anti-bot headers, and magic-byte integrity validation.
+//! The reusable download engine lives in the `pixpull` library crate.
 
-mod args;
-mod client;
-mod config;
-mod cookies;
-mod download;
-mod throttle;
-mod validate;
-
-use args::Args;
 use clap::{CommandFactory, Parser};
-use download::Shared;
 use futures::stream::{self, StreamExt};
+use pixpull::client;
+use pixpull::config;
+use pixpull::download;
+use pixpull::{Args, Shared, Throttle};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Instant;
-use throttle::Throttle;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
