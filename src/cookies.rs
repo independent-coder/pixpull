@@ -143,7 +143,7 @@ mod tests {
     #[test]
     fn parses_netscape_jar() {
         let dir = std::env::temp_dir();
-        let path = dir.join("picdl_test_cookies.txt");
+        let path = dir.join("pixpull_test_cookies.txt");
         let mut f = fs::File::create(&path).unwrap();
         writeln!(f, "# Netscape HTTP Cookie File").unwrap();
         writeln!(f, ".example.com\tTRUE\t/\tFALSE\t9999999999\tsid\txyz").unwrap();
@@ -175,7 +175,7 @@ mod tests {
 
     fn parse_netscape_jar_from_str(s: &str) -> Vec<Cookie> {
         let dir = std::env::temp_dir();
-        let path = dir.join("picdl_test_cookies_str.txt");
+        let path = dir.join("pixpull_test_cookies_str.txt");
         fs::write(&path, s).unwrap();
         let r = parse_netscape_jar(&path).unwrap();
         let _ = fs::remove_file(&path);

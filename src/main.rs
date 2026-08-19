@@ -1,4 +1,4 @@
-//! picdl — super-robust HTTP/HTTPS picture downloader.
+//! pixpull — super-robust HTTP/HTTPS picture downloader.
 //!
 //! Bulk image download with retries/backoff, resume, concurrency, segmented
 //! downloads, anti-bot headers, and magic-byte integrity validation.
@@ -90,7 +90,7 @@ async fn main() -> anyhow::Result<()> {
 
     if !args.quiet {
         println!(
-            "picdl: {} URL(s), concurrency {}, retries {}, split {}",
+            "pixpull: {} URL(s), concurrency {}, retries {}, split {}",
             inputs.len(),
             args.concurrency,
             args.retries,

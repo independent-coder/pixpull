@@ -159,7 +159,7 @@ mod tests {
     #[test]
     fn parses_config() {
         let dir = std::env::temp_dir();
-        let path = dir.join("picdl_test_config.toml");
+        let path = dir.join("pixpull_test_config.toml");
         let mut f = std::fs::File::create(&path).unwrap();
         writeln!(f, "[download]").unwrap();
         writeln!(f, "concurrency = 8").unwrap();

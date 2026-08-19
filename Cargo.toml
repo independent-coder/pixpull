@@ -1,9 +1,13 @@
 [package]
-name = "picdl"
+name = "pixpull"
 version = "0.1.0"
 edition = "2021"
 description = "Super-robust HTTP/HTTPS picture downloader CLI"
 license = "MIT"
+repository = "https://github.com/independent-coder/pixpull"
+readme = "README.md"
+keywords = ["downloader", "http", "image", "scraper", "cli"]
+categories = ["command-line-utilities", "network-programming", "multimedia::images"]
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }

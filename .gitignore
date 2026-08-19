@@ -1,6 +1,6 @@
 # Build artifacts
 /target
-/picdl.exe
+/pixpull.exe
 
 # Download outputs (test/benchmark runs)
 /pics/

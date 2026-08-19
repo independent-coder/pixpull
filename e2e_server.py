@@ -1,4 +1,4 @@
-"""Local fixture server for end-to-end testing of picdl.
+"""Local fixture server for end-to-end testing of pixpull.
 
 Serves real image bytes and simulates the failure modes a scraper hits:
 flaky connections (for resume), 5xx (for retry), and garbage bodies (for

@@ -1,4 +1,4 @@
-# picdl
+# pixpull
 
 Super-robust HTTP/HTTPS **picture** downloader, written from scratch in Rust.
 The download engine for your scrapers — no more shelling out to `aria2c`.
@@ -21,7 +21,7 @@ The download engine for your scrapers — no more shelling out to `aria2c`.
 ## Build
 
 ```bash
-cargo build --release        # binary at target/release/picdl
+cargo build --release        # binary at target/release/pixpull
 ```
 
 Only the Rust toolchain is needed — no Python, no aria2c, no OpenSSL.
@@ -30,34 +30,34 @@ Only the Rust toolchain is needed — no Python, no aria2c, no OpenSSL.
 
 ```bash
 # Basic
-picdl -o pics https://site.com/img/1.jpg https://site.com/img/2.jpg
+pixpull -o pics https://site.com/img/1.jpg https://site.com/img/2.jpg
 
 # URL list file (one per line, # comments; aria2c-compatible)
-picdl -i urls.txt -o pics
+pixpull -i urls.txt -o pics
 
 # Scraper-style: numbered files, 8 parallel, 250ms spacing, 10 retries
-picdl -i urls.txt -o pics -c 8 --delay 250 --retries 10 \
+pixpull -i urls.txt -o pics -c 8 --delay 250 --retries 10 \
       --filename "img_{n:04}.{ext}"
 
 # Anti-bot setup
-picdl -i urls.txt --ua-rotate -H "X-Requested-With: XMLHttpRequest" \
+pixpull -i urls.txt --ua-rotate -H "X-Requested-With: XMLHttpRequest" \
       --referer https://site.com --cookie-jar cookies.txt \
       --proxy http://127.0.0.1:8080
 
 # Max speed on a connection-capped CDN (like aria2c -x 16):
 # 4 files in parallel, each split across 16 range requests
-picdl -i urls.txt -c 4 --split 16
+pixpull -i urls.txt -c 4 --split 16
 
 # Polite / anti-ban scraping: cap global throughput, honor Retry-After,
 # stop if the gallery just ends, and keep a run log
-picdl -i urls.txt -c 4 --split 16 --max-overall-download-limit 2048 \
+pixpull -i urls.txt -c 4 --split 16 --max-overall-download-limit 2048 \
       --max-file-not-found 10 --log run.log
 
 # Self-signed / broken certs
-picdl -i urls.txt --insecure
+pixpull -i urls.txt --insecure
 
 # Resume a half-finished run (skips done files, resumes .part files)
-picdl -i urls.txt -o pics
+pixpull -i urls.txt -o pics
 ```
 
 Filename templates: `{n}` index, `{n:04}` zero-padded, `{ext}` detected
@@ -65,7 +65,7 @@ extension. Default is the (sanitized) URL basename.
 
 ## `out=` per-URL filenames (aria2c input format)
 
-picdl reads the same input-file format your aria2c lists use — an `out=` line
+pixpull reads the same input-file format your aria2c lists use — an `out=` line
 under a URL sets that URL's output name (indented or not):
 
 ```
@@ -115,7 +115,7 @@ cookie_jar = "cookies.txt"
 ```
 
 ```bash
-picdl --config picdl.toml -i urls.txt
+pixpull --config pixpull.toml -i urls.txt
 ```
 
 Cookie jars use the Netscape format (same as `curl -b` / `aria2c --load-cookies`).
@@ -140,12 +140,12 @@ Measured on a real 58-image batch (same host, ~99 MB), all runs fresh:
 
 | run | time | throughput | validates |
 |---|---|---|---|
-| picdl, no connection pooling | 37.4s | 2.5 MiB/s | ✅ |
-| picdl, pooled client | 32.5s | 2.9 MiB/s | ✅ |
+| pixpull, no connection pooling | 37.4s | 2.5 MiB/s | ✅ |
+| pixpull, pooled client | 32.5s | 2.9 MiB/s | ✅ |
 | aria2c `-j 4` (1 conn/file) | 24.3s | 4.1 MiB/s | ❌ |
 | aria2c `-j 4 -s 16 -x 16` | 14.1s | 6.7 MiB/s | ❌ |
-| picdl `-c 4 --split 16` | 14.1s | 6.7 MiB/s | ✅ |
-| **picdl `-c 4 --split 16 --http1`** | **12.0s** | **7.9 MiB/s** | ✅ |
+| pixpull `-c 4 --split 16` | 14.1s | 6.7 MiB/s | ✅ |
+| **pixpull `-c 4 --split 16 --http1`** | **12.0s** | **7.9 MiB/s** | ✅ |
 
 How to get there:
 1. **Connection pooling** — one shared client so keep-alive reuse applies
@@ -158,9 +158,9 @@ How to get there:
    config file.
 
 The advantage grows with file size — on a 78-file batch of ~6 MB images
-(481 MB total) picdl hit **19.6 MiB/s (23.5s)** vs aria2c's **15.7 MiB/s
+(481 MB total) pixpull hit **19.6 MiB/s (23.5s)** vs aria2c's **15.7 MiB/s
 (30.7s)**, ~25% faster, because per-request overhead amortizes and the CDN
-rewards the extra parallel connections. picdl also magic-byte-validates every
+rewards the extra parallel connections. pixpull also magic-byte-validates every
 file, which aria2c does not.
 
 ## Notes / limitations

@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 #[derive(Parser, Debug, Clone)]
 #[command(
-    name = "picdl",
+    name = "pixpull",
     version,
     about = "Super-robust HTTP/HTTPS picture downloader",
     long_about = "Bulk-download images with retries/backoff, resume support, \
@@ -207,7 +207,7 @@ mod tests {
     #[test]
     fn parses_out_lines_from_input_file() {
         let dir = std::env::temp_dir();
-        let path = dir.join("picdl_test_input.txt");
+        let path = dir.join("pixpull_test_input.txt");
         let mut f = std::fs::File::create(&path).unwrap();
         writeln!(f, "https://a.example/1.jpg").unwrap();
         writeln!(f, "  out=img_0001.jpg").unwrap();
